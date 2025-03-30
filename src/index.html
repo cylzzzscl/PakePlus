@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus App</title>
-        <script type="module" src="/main.js" defer></script>
-    </head>
-
-    <body>
-        <main class="container">
-            <h1>Welcome to PakePlus</h1>
-
-            <form class="row" id="greet-form">
-                <input id="greet-input" placeholder="Enter a name..." />
-                <button type="submit">Greet</button>
-            </form>
-            <p id="greet-msg"></p>
-        </main>
-    </body>
-</html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沙盘流程 - 首页</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="fullscreen-container">
+        <div class="image-slider">
+            <img src="images/main-bg1.jpg" alt="沙盘背景1" class="fullscreen-image active">
+            <img src="images/main-bg2.jpg" alt="沙盘背景2" class="fullscreen-image">
+            <img src="images/main-bg3.jpg" alt="沙盘背景3" class="fullscreen-image">
+        </div>
+        <audio id="bgMusic" loop>
+            <source src="audio/background-music.mp3" type="audio/mpeg">
+            您的浏览器不支持音频播放。
+        </audio>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
