@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沙盘流程 - 感谢</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .fullscreen-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .fullscreen-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="fullscreen-container">
+        <img src="images/thanks.jpg" class="fullscreen-image" alt="感谢页面">
+    </div>
+    <script>
+        // 添加键盘导航（只有返回功能）
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    window.location.href = 'end.html';
+                    break;
+                // 不处理向右和向下的按键
+            }
+        });
+
+        // 不添加点击事件，因为没有下一页
+        
+        // 不需要预加载，因为这是最后一页
+    </script>
+</body>
+</html> 
