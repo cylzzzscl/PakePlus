@@ -77,11 +77,10 @@
             }
 
             if (direction === 'next') {
-                window.location.href = 'rule.html';
+                window.location.href = 'rule1.html';
             } else if (direction === 'prev') {
-                // 返回到index.html并显示最后一张图片
-                sessionStorage.setItem('returnToLastImage', 'true');
-                window.location.href = 'index.html';
+                // 返回到 index3.html
+                window.location.href = 'index3.html';
             }
         }
 
@@ -113,7 +112,7 @@
             const link = document.createElement('link');
             link.rel = 'preload';
             link.as = 'document';
-            link.href = 'rule.html';
+            link.href = 'rule1.html';
             document.head.appendChild(link);
         }
 
