@@ -1,22 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus App</title>
-        <script type="module" src="/main.js" defer></script>
-    </head>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沙盘流程 - 首页</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
 
-    <body>
-        <main class="container">
-            <h1>Welcome to PakePlus</h1>
+        .fullscreen-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-            <form class="row" id="greet-form">
-                <input id="greet-input" placeholder="Enter a name..." />
-                <button type="submit">Greet</button>
-            </form>
-            <p id="greet-msg"></p>
-        </main>
-    </body>
-</html>
+        .fullscreen-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 添加全屏提示框样式 */
+        .fullscreen-tip {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            text-align: center;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .fullscreen-tip.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 添加页面过渡效果 */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+            z-index: 2000;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+    </style>
+</head>
+<body>
+    <div class="fullscreen-container">
+        <img src="images/main-bg1.jpg" alt="沙盘背景1" class="fullscreen-image active">
+        <audio id="bgMusic" loop>
+            <source src="audio/background-music.mp3" type="audio/mpeg">
+            您的浏览器不支持音频播放。
+        </audio>
+    </div>
+    <!-- 添加全屏提示框 -->
+    <div class="fullscreen-tip">
+        请将页面调整为全屏
+    </div>
+    <div class="page-transition"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgMusic = document.getElementById('bgMusic');
+            const fullscreenTip = document.querySelector('.fullscreen-tip');
+            let hasInteracted = false;
+            
+            // 从本地存储获取播放进度
+            const savedTime = localStorage.getItem('musicTime');
+            if(savedTime) {
+                bgMusic.currentTime = parseFloat(savedTime);
+                // 尝试播放音乐
+                bgMusic.play().catch(error => console.log("音频播放失败:", error));
+            }
+            
+            // 保存播放进度到本地存储
+            window.addEventListener('beforeunload', () => {
+                localStorage.setItem('musicTime', bgMusic.currentTime);
+            });
+
+            // 5秒后自动隐藏提示框
+            setTimeout(() => {
+                fullscreenTip.classList.add('hide');
+                hasInteracted = true;
+            }, 5000);
+
+            // 点击也可以立即隐藏提示框并播放音乐
+            document.addEventListener('click', function() {
+                if (!hasInteracted) {
+                    hasInteracted = true;
+                    fullscreenTip.classList.add('hide');
+                    bgMusic.play().catch(error => console.log("音频播放失败:", error));
+                }
+                navigateToNext();
+            });
+
+            // 页面跳转逻辑
+            function navigateToNext() {
+                window.location.href = 'index2.html';
+            }
+
+            document.addEventListener('keydown', (e) => {
+                if(e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    if (!hasInteracted) {
+                        hasInteracted = true;
+                        fullscreenTip.classList.add('hide');
+                        bgMusic.play().catch(error => console.log("音频播放失败:", error));
+                    }
+                    navigateToNext();
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
