@@ -91,6 +91,18 @@
                     navigateToPrevious();
                 }
             });
+
+            // 预加载下一个页面 - 这部分可能缺失
+            function preloadNextPage() {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'document';
+                link.href = 'meditation.html';
+                document.head.appendChild(link);
+            }
+            
+            // 页面加载时就开始预加载
+            preloadNextPage();
         });
     </script>
 </body>
