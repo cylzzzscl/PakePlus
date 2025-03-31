@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复盘 - 第二页</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .fullscreen-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .fullscreen-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 添加页面过渡效果 */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+            z-index: 2000;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+    </style>
+</head>
+<body>
+    <div class="fullscreen-container">
+        <img src="images/replay2.jpg" class="fullscreen-image" alt="复盘图片2">
+        <audio id="replayMusic" loop>
+            <source src="audio/replay-bg.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+    <div class="page-transition"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const replayMusic = document.getElementById('replayMusic');
+            
+            // 从本地存储获取播放进度
+            const savedTime = localStorage.getItem('replayMusicTime');
+            if(savedTime) {
+                replayMusic.currentTime = parseFloat(savedTime);
+                // 尝试播放音乐
+                replayMusic.volume = 0.3;
+                replayMusic.play().catch(() => {
+                    console.log('等待用户交互以播放音频');
+                });
+            }
+            
+            // 保存播放进度到本地存储
+            window.addEventListener('beforeunload', () => {
+                localStorage.setItem('replayMusicTime', replayMusic.currentTime);
+            });
+
+            // 页面跳转逻辑
+            function navigateToNext() {
+                window.location.href = 'video.html';
+            }
+
+            function navigateToPrevious() {
+                window.location.href = 'replay1.html';
+            }
+
+            // 处理点击事件
+            document.addEventListener('click', navigateToNext);
+            
+            // 添加键盘导航
+            document.addEventListener('keydown', (e) => {
+                switch(e.key) {
+                    case 'ArrowRight':
+                    case 'ArrowDown':
+                        navigateToNext();
+                        break;
+                    case 'ArrowLeft':
+                    case 'ArrowUp':
+                        navigateToPrevious();
+                        break;
+                }
+            });
+
+            // 预加载下一个页面
+            function preloadNextPage() {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'document';
+                link.href = 'video.html';
+                document.head.appendChild(link);
+            }
+
+            // 页面加载时就开始预加载
+            preloadNextPage();
+        });
+    </script>
+</body>
+</html> 
