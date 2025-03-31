@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频播放</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .embedded-content {
+            width: 95%;  /* 增加宽度 */
+            height: 90%; /* 增加高度 */
+            border: none;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+
+        .nav-button {
+            position: fixed;
+            bottom: 20px;
+            padding: 10px 20px;
+            background: #00a1d6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-button:hover {
+            background: #0088b3;
+        }
+
+        .nav-button.prev {
+            left: 20px;
+        }
+
+        .nav-button.next {
+            right: 20px;
+        }
+
+        .login-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #00a1d6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <iframe 
+            class="embedded-content"
+            src="https://www.bilibili.com/video/BV1BN411J7CH/"
+            allowfullscreen
+            scrolling="no"
+            border="0"
+            frameborder="no"
+            framespacing="0"
+            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+        ></iframe>
+    </div>
+
+    <button class="nav-button prev" onclick="window.location.href='replay2.html'">
+        返回上页
+    </button>
+
+    <button class="nav-button next" onclick="window.location.href='end.html'">
+        完成观看
+    </button>
+
+    <button class="login-button" 
+        onclick="openAndRedirect()"
+    >
+        用新窗口登录会员看高清版
+    </button>
+
+    <script>
+        function openAndRedirect() {
+            window.open('https://www.bilibili.com/video/BV1BN411J7CH/', '_blank');
+            window.location.href = 'end.html';
+        }
+
+        // 添加键盘导航
+        document.addEventListener('keydown', function(event) {
+            switch(event.key) {
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    window.location.href = 'replay2.html';
+                    break;
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    window.location.href = 'end.html';
+                    break;
+            }
+        });
+
+        // 预加载下一个页面
+        function preloadNextPage() {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = 'document';
+            link.href = 'end.html';
+            document.head.appendChild(link);
+        }
+
+        // 页面加载时就开始预加载
+        preloadNextPage();
+    </script>
+</body>
+</html> 
