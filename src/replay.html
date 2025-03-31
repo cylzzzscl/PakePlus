@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复盘</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .fullscreen-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .fullscreen-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .fullscreen-image.active {
+            opacity: 1;
+        }
+
+        .fullscreen-prompt {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="fullscreen-container">
+        <img src="images/replay1.jpg" class="fullscreen-image active" alt="复盘图片1">
+        <img src="images/replay2.jpg" class="fullscreen-image" alt="复盘图片2">
+        <audio id="replayMusic" loop>
+            <source src="audio/replay-bg.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        const images = document.querySelectorAll('.fullscreen-image');
+        const replayMusic = document.getElementById('replayMusic');
+        let currentIndex = 0;
+        let isTransitioning = false;
+        
+        // 初始化音乐
+        function initializeAudio() {
+            replayMusic.volume = 0.3;
+            replayMusic.play().catch(() => {
+                console.log('等待用户交互以播放音频');
+            });
+        }
+        
+        // 切换到下一张图片
+        function showNextImage() {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.add('active');
+            
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 1000);
+        }
+        
+        // 切换到上一张图片
+        function showPreviousImage() {
+            if (isTransitioning) return;
+            isTransitioning = true;
+            
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            images[currentIndex].classList.add('active');
+            
+            setTimeout(() => {
+                isTransitioning = false;
+            }, 1000);
+        }
+        
+        // 处理点击事件
+        document.addEventListener('click', () => {
+            if (currentIndex === images.length - 1) {
+                window.location.href = 'video.html';
+            } else {
+                showNextImage();
+            }
+        });
+        
+        // 添加键盘导航
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    if (currentIndex === images.length - 1) {
+                        window.location.href = 'video.html';
+                    } else {
+                        showNextImage();
+                    }
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    if (currentIndex === 0) {
+                        window.location.href = 'countdown10.html';
+                    } else {
+                        showPreviousImage();
+                    }
+                    break;
+            }
+        });
+
+        // 预加载下一个页面
+        function preloadNextPage() {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = 'document';
+            link.href = 'video.html';
+            document.head.appendChild(link);
+        }
+
+        // 页面加载时就开始预加载和播放音乐
+        preloadNextPage();
+        initializeAudio();
+    </script>
+</body>
+</html> 
