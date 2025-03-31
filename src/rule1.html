@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沙盘流程 - 规则1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        .rule-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .fullscreen-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 添加页面过渡效果 */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+            z-index: 2000;
+        }
+
+        .page-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+    </style>
+</head>
+<body>
+    <div class="rule-container">
+        <img src="images/rule1.jpg" alt="规则1" class="fullscreen-image">
+        <audio id="ruleMusic" loop>
+            <source src="audio/rule.mp3" type="audio/mpeg">
+            您的浏览器不支持音频播放。
+        </audio>
+    </div>
+    <div class="page-transition"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ruleMusic = document.getElementById('ruleMusic');
+            
+            // 从本地存储获取播放进度
+            const savedTime = localStorage.getItem('ruleMusicTime');
+            if(savedTime) {
+                ruleMusic.currentTime = parseFloat(savedTime);
+            } else {
+                ruleMusic.currentTime = 3; // 设置开始时间为3秒
+            }
+            
+            // 尝试播放音乐
+            ruleMusic.play().catch(error => console.log('自动播放被阻止:', error));
+            
+            // 保存播放进度到本地存储
+            window.addEventListener('beforeunload', () => {
+                localStorage.setItem('ruleMusicTime', ruleMusic.currentTime);
+            });
+
+            // 自动全屏
+            function enterFullscreen() {
+                const element = document.documentElement;
+                if (element.requestFullscreen) {
+                    element.requestFullscreen();
+                } else if (element.mozRequestFullScreen) {
+                    element.mozRequestFullScreen();
+                } else if (element.webkitRequestFullscreen) {
+                    element.webkitRequestFullscreen();
+                } else if (element.msRequestFullscreen) {
+                    element.msRequestFullscreen();
+                }
+            }
+
+            // 页面跳转逻辑
+            function navigateToNext() {
+                window.location.href = 'rule2.html';
+            }
+
+            function navigateToPrevious() {
+                window.location.href = 'meditation.html';
+            }
+
+            document.addEventListener('click', navigateToNext);
+            document.addEventListener('keydown', (e) => {
+                if(e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    navigateToNext();
+                } else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    navigateToPrevious();
+                }
+            });
+
+            // 页面加载完成后自动全屏
+            window.addEventListener('load', enterFullscreen);
+
+            // 预加载下一个页面
+            function preloadNextPage() {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.as = 'document';
+                link.href = 'rule2.html';
+                document.head.appendChild(link);
+            }
+
+            // 页面加载时就开始预加载
+            preloadNextPage();
+        });
+    </script>
+</body>
+</html> 
