@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>结束页面</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .fullscreen-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .fullscreen-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="fullscreen-container">
+        <img src="images/end.jpg" class="fullscreen-image" alt="结束页面">
+    </div>
+    <script>
+        // 添加键盘导航
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    window.location.href = 'thanks.html';
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    window.location.href = 'video.html';
+                    break;
+            }
+        });
+
+        // 添加点击事件
+        document.addEventListener('click', () => {
+            window.location.href = 'thanks.html';
+        });
+
+        // 预加载下一个页面
+        function preloadNextPage() {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = 'document';
+            link.href = 'thanks.html';
+            document.head.appendChild(link);
+        }
+
+        // 页面加载时就开始预加载
+        preloadNextPage();
+    </script>
+</body>
+</html> 
