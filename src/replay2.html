@@ -63,21 +63,25 @@
         document.addEventListener('DOMContentLoaded', function() {
             const replayMusic = document.getElementById('replayMusic');
             
-            // 从本地存储获取播放进度
-            const savedTime = localStorage.getItem('replayMusicTime');
+            // 从 sessionStorage 获取播放进度和状态
+            const savedTime = sessionStorage.getItem('replayMusicTime');
+            const wasPlaying = sessionStorage.getItem('replayMusicPlaying') === 'true';
+            
             if(savedTime) {
                 replayMusic.currentTime = parseFloat(savedTime);
-                // 尝试播放音乐
                 replayMusic.volume = 0.3;
-                replayMusic.play().catch(() => {
-                    console.log('等待用户交互以播放音频');
-                });
+                if (wasPlaying) {
+                    replayMusic.play().catch(error => console.log('音频播放失败:', error));
+                }
             }
             
-            // 保存播放进度到本地存储
-            window.addEventListener('beforeunload', () => {
-                localStorage.setItem('replayMusicTime', replayMusic.currentTime);
-            });
+            // 定期保存播放进度
+            setInterval(() => {
+                if (!replayMusic.paused) {
+                    sessionStorage.setItem('replayMusicTime', replayMusic.currentTime);
+                    sessionStorage.setItem('replayMusicPlaying', true);
+                }
+            }, 1000);
 
             // 页面跳转逻辑
             function navigateToNext() {
