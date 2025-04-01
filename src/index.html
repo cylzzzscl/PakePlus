@@ -50,57 +50,46 @@
             pointer-events: none;
         }
 
-        /* 添加页面过渡效果 */
+        /* 移除页面过渡相关样式 */
         .page-transition {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 1s ease;
-            z-index: 2000;
-        }
-
-        .page-transition.active {
-            opacity: 1;
-            pointer-events: all;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="fullscreen-container">
         <img src="images/main-bg1.jpg" alt="沙盘背景1" class="fullscreen-image active">
-        <audio id="bgMusic" loop>
+        <audio id="bgMusic" loop autoplay>
             <source src="audio/background-music.mp3" type="audio/mpeg">
             您的浏览器不支持音频播放。
         </audio>
     </div>
-    <!-- 添加全屏提示框 -->
     <div class="fullscreen-tip">
         请将页面调整为全屏
     </div>
-    <div class="page-transition"></div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const bgMusic = document.getElementById('bgMusic');
             const fullscreenTip = document.querySelector('.fullscreen-tip');
             let hasInteracted = false;
             
-            // 从本地存储获取播放进度
-            const savedTime = localStorage.getItem('musicTime');
-            if(savedTime) {
-                bgMusic.currentTime = parseFloat(savedTime);
-                // 尝试播放音乐
-                bgMusic.play().catch(error => console.log("音频播放失败:", error));
-            }
-            
-            // 保存播放进度到本地存储
-            window.addEventListener('beforeunload', () => {
-                localStorage.setItem('musicTime', bgMusic.currentTime);
+            // 自动播放音乐
+            bgMusic.play().catch(error => {
+                console.log("自动播放失败，等待用户交互:", error);
+                // 如果自动播放失败，监听用户交互后再次尝试播放
+                document.addEventListener('click', function playOnFirstInteraction() {
+                    bgMusic.play();
+                    document.removeEventListener('click', playOnFirstInteraction);
+                }, { once: true });
             });
+            
+            // 使用 sessionStorage 保存播放进度
+            setInterval(() => {
+                if (!bgMusic.paused) {
+                    sessionStorage.setItem('musicTime', bgMusic.currentTime);
+                    sessionStorage.setItem('musicPlaying', true);
+                }
+            }, 1000);
 
             // 5秒后自动隐藏提示框
             setTimeout(() => {
@@ -108,43 +97,32 @@
                 hasInteracted = true;
             }, 5000);
 
-            // 点击也可以立即隐藏提示框并播放音乐
-            document.addEventListener('click', function() {
-                if (!hasInteracted) {
-                    hasInteracted = true;
-                    fullscreenTip.classList.add('hide');
-                    bgMusic.play().catch(error => console.log("音频播放失败:", error));
-                }
-                navigateToNext();
-            });
-
             // 页面跳转逻辑
             function navigateToNext() {
                 window.location.href = 'index2.html';
             }
 
+            document.addEventListener('click', navigateToNext);
             document.addEventListener('keydown', (e) => {
                 if(e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                    if (!hasInteracted) {
-                        hasInteracted = true;
-                        fullscreenTip.classList.add('hide');
-                        bgMusic.play().catch(error => console.log("音频播放失败:", error));
-                    }
                     navigateToNext();
                 }
             });
 
-            // 预加载下一个页面 - 这部分可能缺失
+            // 预加载下一个页面
+            preloadNextPage();
+            
             function preloadNextPage() {
                 const link = document.createElement('link');
                 link.rel = 'preload';
                 link.as = 'document';
                 link.href = 'index2.html';
                 document.head.appendChild(link);
+                
+                // 预加载下一页的图片
+                const img = new Image();
+                img.src = 'images/main-bg2.jpg';
             }
-            
-            // 页面加载时就开始预加载
-            preloadNextPage();
         });
     </script>
 </body>
