@@ -1,8 +1,8 @@
 {
     "$schema": "https://schema.tauri.app/config/2",
-    "productName": "RestartLife-BM1",
+    "productName": "RestartLife-NZ1",
     "version": "0.0.1",
-    "identifier": "com.RLBM1.app",
+    "identifier": "com.RLNZ1.app",
     "build": {"frontendDist": "../src"},
     "app": {
         "security": {
