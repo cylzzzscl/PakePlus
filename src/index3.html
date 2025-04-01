@@ -29,23 +29,9 @@
             object-fit: cover;
         }
 
-        /* 添加页面过渡效果 */
+        /* 移除页面过渡相关样式 */
         .page-transition {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: black;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 1s ease;
-            z-index: 2000;
-        }
-
-        .page-transition.active {
-            opacity: 1;
-            pointer-events: all;
+            display: none;
         }
     </style>
 </head>
@@ -57,22 +43,28 @@
             您的浏览器不支持音频播放。
         </audio>
     </div>
-    <div class="page-transition"></div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const bgMusic = document.getElementById('bgMusic');
-            // 从本地存储获取播放进度
-            const savedTime = localStorage.getItem('musicTime');
+            
+            // 从 sessionStorage 获取播放进度和状态
+            const savedTime = sessionStorage.getItem('musicTime');
+            const wasPlaying = sessionStorage.getItem('musicPlaying') === 'true';
+            
             if(savedTime) {
                 bgMusic.currentTime = parseFloat(savedTime);
-                // 尝试播放音乐
-                bgMusic.play().catch(error => console.log("音频播放失败:", error));
+                if (wasPlaying) {
+                    bgMusic.play().catch(error => console.log("音频播放失败:", error));
+                }
             }
             
-            // 保存播放进度到本地存储
-            window.addEventListener('beforeunload', () => {
-                localStorage.setItem('musicTime', bgMusic.currentTime);
-            });
+            // 定期保存播放进度
+            setInterval(() => {
+                if (!bgMusic.paused) {
+                    sessionStorage.setItem('musicTime', bgMusic.currentTime);
+                    sessionStorage.setItem('musicPlaying', true);
+                }
+            }, 1000);
 
             // 页面跳转逻辑
             function navigateToNext() {
@@ -92,7 +84,9 @@
                 }
             });
 
-            // 预加载下一个页面 - 这部分可能缺失
+            // 预加载下一个页面
+            preloadNextPage();
+            
             function preloadNextPage() {
                 const link = document.createElement('link');
                 link.rel = 'preload';
@@ -100,9 +94,6 @@
                 link.href = 'meditation.html';
                 document.head.appendChild(link);
             }
-            
-            // 页面加载时就开始预加载
-            preloadNextPage();
         });
     </script>
 </body>
