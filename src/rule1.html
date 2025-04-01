@@ -56,7 +56,7 @@
 <body>
     <div class="rule-container">
         <img src="images/rule1.jpg" alt="规则1" class="fullscreen-image">
-        <audio id="ruleMusic" loop>
+        <audio id="ruleMusic" loop autoplay>
             <source src="audio/rule.mp3" type="audio/mpeg">
             您的浏览器不支持音频播放。
         </audio>
@@ -67,21 +67,24 @@
         document.addEventListener('DOMContentLoaded', function() {
             const ruleMusic = document.getElementById('ruleMusic');
             
-            // 从本地存储获取播放进度
-            const savedTime = localStorage.getItem('ruleMusicTime');
-            if(savedTime) {
-                ruleMusic.currentTime = parseFloat(savedTime);
-            } else {
-                ruleMusic.currentTime = 3; // 设置开始时间为3秒
-            }
-            
-            // 尝试播放音乐
-            ruleMusic.play().catch(error => console.log('自动播放被阻止:', error));
-            
-            // 保存播放进度到本地存储
-            window.addEventListener('beforeunload', () => {
-                localStorage.setItem('ruleMusicTime', ruleMusic.currentTime);
+            // 自动播放音乐
+            ruleMusic.currentTime = 3; // 设置开始时间为3秒
+            ruleMusic.play().catch(error => {
+                console.log("自动播放失败，等待用户交互:", error);
+                // 如果自动播放失败，监听用户交互后再次尝试播放
+                document.addEventListener('click', function playOnFirstInteraction() {
+                    ruleMusic.play();
+                    document.removeEventListener('click', playOnFirstInteraction);
+                }, { once: true });
             });
+            
+            // 使用 sessionStorage 保存播放进度
+            setInterval(() => {
+                if (!ruleMusic.paused) {
+                    sessionStorage.setItem('ruleMusicTime', ruleMusic.currentTime);
+                    sessionStorage.setItem('ruleMusicPlaying', true);
+                }
+            }, 1000);
 
             // 自动全屏
             function enterFullscreen() {
