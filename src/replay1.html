@@ -53,7 +53,7 @@
 <body>
     <div class="fullscreen-container">
         <img src="images/replay1.jpg" class="fullscreen-image" alt="复盘图片1">
-        <audio id="replayMusic" loop>
+        <audio id="replayMusic" loop autoplay>
             <source src="audio/replay-bg.mp3" type="audio/mpeg">
         </audio>
     </div>
@@ -63,22 +63,24 @@
         document.addEventListener('DOMContentLoaded', function() {
             const replayMusic = document.getElementById('replayMusic');
             
-            // 从本地存储获取播放进度
-            const savedTime = localStorage.getItem('replayMusicTime');
-            if(savedTime) {
-                replayMusic.currentTime = parseFloat(savedTime);
-            }
-            
-            // 初始化音乐
+            // 自动播放音乐
             replayMusic.volume = 0.3;
-            replayMusic.play().catch(() => {
-                console.log('等待用户交互以播放音频');
+            replayMusic.play().catch(error => {
+                console.log('自动播放失败，等待用户交互:', error);
+                // 如果自动播放失败，监听用户交互后再次尝试播放
+                document.addEventListener('click', function playOnFirstInteraction() {
+                    replayMusic.play();
+                    document.removeEventListener('click', playOnFirstInteraction);
+                }, { once: true });
             });
             
-            // 保存播放进度到本地存储
-            window.addEventListener('beforeunload', () => {
-                localStorage.setItem('replayMusicTime', replayMusic.currentTime);
-            });
+            // 使用 sessionStorage 保存播放进度
+            setInterval(() => {
+                if (!replayMusic.paused) {
+                    sessionStorage.setItem('replayMusicTime', replayMusic.currentTime);
+                    sessionStorage.setItem('replayMusicPlaying', true);
+                }
+            }, 1000);
 
             // 页面跳转逻辑
             function navigateToNext() {
